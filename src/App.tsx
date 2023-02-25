@@ -28,7 +28,7 @@ function ProgramSelector() {
   const [programId, setProgramId] = useState(0);
 
   return (
-    <div>
+    <div className="ProgramSelector">
       <span>{programId+1}</span>
       <button onClick={programUp}>Up</button>
       <button onClick={programDown}>Down</button>
@@ -40,9 +40,10 @@ function ProgramSelector() {
 function App() {
   const [count, setCount] = useState(0)
 
-  const openMidi = () => {
-    console.log("opening midi")
-    invoke('open_midi_connection', { outputPortIdx: 1 });
+  const openMidi = async () => {
+    console.log("opening midi");
+    const result = await invoke('open_midi_connection', { outputPortIdx: 1 });
+    console.log("midi opened");
   };
 
   return (

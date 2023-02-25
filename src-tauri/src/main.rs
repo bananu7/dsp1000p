@@ -5,11 +5,10 @@
 
 
 use std::error::Error;
-use std::io::Write;
+
 use midir::MidiOutput;
 use midir::MidiOutputPort;
-use std::io::stdout;
-use std::io::stdin;
+
 use std::sync::{Mutex};
 use midir::{MidiInputConnection, MidiOutputConnection};
 use tauri::{Window, Wry};
@@ -28,7 +27,7 @@ struct MidiMessage {
   message: Vec<u8>
 }
 
-fn create_output_connection(_output_port_idx: usize)
+fn create_output_connection(output_port_idx: usize)
   -> Result<MidiOutputConnection, Box<dyn Error>>
 {
   let midi_out = MidiOutput::new("My Test Output")?;
@@ -41,8 +40,8 @@ fn create_output_connection(_output_port_idx: usize)
           println!("Choosing the only available output port: {}", midi_out.port_name(&out_ports[0]).unwrap());
           &out_ports[0]
       },
-      _ => {
-          println!("\nAvailable output ports:");
+      n => {
+          /*println!("\nAvailable output ports:");
           for (i, p) in out_ports.iter().enumerate() {
               println!("{}: {}", i, midi_out.port_name(p).unwrap());
           }
@@ -51,7 +50,15 @@ fn create_output_connection(_output_port_idx: usize)
           let mut input = String::new();
           stdin().read_line(&mut input)?;
           out_ports.get(input.trim().parse::<usize>()?)
-                   .ok_or("invalid output port selected")?
+                   .ok_or("invalid output port selected")?*/
+          if output_port_idx < n {
+            println!("\nChoosing the user-selected port: {}", output_port_idx);
+            &out_ports[output_port_idx]
+          } else {
+            println!("\nUser selected port {} but only {} present", output_port_idx, n);
+            return Err("chosen output port index not present".into())
+          }
+
       }
   };
 
