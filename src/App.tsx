@@ -1,9 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 
+import { listen } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api'
+
 function App() {
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    console.log("opening midi")
+    invoke('open_midi_connection', { inputIdx: 1 });
+  }, []);
 
   return (
     <div className="App">
