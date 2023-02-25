@@ -72,3 +72,11 @@ div.EffectPanel {
   flex-direction: column;
   gap: 10px;
 }
+
+div.Param {
+  background-color: #333;
+  border-radius: 5px;
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+}

@@ -7,7 +7,7 @@ import { invoke } from '@tauri-apps/api'
 import { Display } from "react-7-segment-display";
 
 import {MidiClient, connectMidi} from './backend/midi'
-import {EffectType, Parameter} from './backend/dsp_constants'
+import {EffectType, Parameter, parameterData, ReverbParameters} from './backend/dsp_constants'
 
 function ProgramSelector(props: { client: MidiClient }) {
   const programUp = () => {
@@ -58,7 +58,7 @@ function Param(props: ParamProps) {
   }
 
   return (
-    <div className="ProgramSelector">
+    <div className="Param">
       <label>{props.label}</label>
       <input
         type="number"
@@ -71,16 +71,61 @@ function Param(props: ParamProps) {
   );
 }
 
-function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
-
+function ReverbEffectPanel(props: { 
+  client: MidiClient,
+  effectType: EffectType,
+  parameters: ReverbParameters }
+) {
   return (
     <div className="EffectPanel">
       <span>{EffectType[props.effectType]}</span>
-      <Param client={props.client} param={Parameter.VARIATION} min={1} max={32} label="Variation"/>
-      <Param client={props.client} param={Parameter.EDIT_A} min={1} max={64} label="Edit A"/>
-      <Param client={props.client} param={Parameter.EDIT_B} min={1} max={64} label="Edit B"/>
+      <Param
+        client={props.client}
+        param={Parameter.VARIATION}
+        min={1}
+        max={32}
+        label={props.parameters.variation}
+      />
+
+      <Param
+        client={props.client}
+        param={Parameter.EDIT_A}
+        min={1}
+        max={64}
+        label={props.parameters.editA}
+      />
+      <Param
+        client={props.client}
+        param={Parameter.EDIT_B}
+        min={1}
+        max={64}
+        label={props.parameters.editBL}
+      />
+      <Param
+        client={props.client}
+        param={Parameter.EDIT_B}
+        min={1}
+        max={64}
+        label={props.parameters.editBR}
+      />
     </div>
   )
+}
+
+function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
+  const data = parameterData[props.effectType];
+
+  if (data.type == "reverb") {
+    return (
+      <ReverbEffectPanel
+        client={props.client}
+        effectType={props.effectType}
+        parameters={data}
+      />
+    );
+  } else {
+    return (<span>This effect is not supported yet</span>);
+  }
 }
 
 function App() {

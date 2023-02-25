@@ -71,47 +71,51 @@ then edit a or b can be changed.
 
 */
 
-type Variation = {
+export type Variation = {
   variation: string
 }
 
-type ReverbParameters = Variation & {
+export type ReverbParameters = Variation & {
+  type: "reverb",
   editA: string,
   editBL: string,
   editBR: string
 }
 
 // Delay, Echo, Flanger, Pitch, Chorus
-type StereoParameters = Variation & {
-  stereo: true,
+export type StereoParameters = Variation & {
+  type: "stereo",
   editA: string,
   editB: string,
 }
 
-type SpecialReverbParameters = Variation & {
+export type SpecialParameters = Variation & {
+  type: "special",
   editA: string,
   editB: string
 }
 
-type DualEffectParameter = Variation & {
+export type DualEffectParameter = Variation & {
+  type: "dual",
   editAL: string,
   editAR: string,
   editBL: string,
   editBR: string
 }
 
-type ParameterData =
+export type ParameterData =
   ReverbParameters |
   StereoParameters |
-  SpecialReverbParameters |
+  SpecialParameters |
   DualEffectParameter;
 
-type ParametersData = {
+export type ParametersData = {
   [key: number]: ParameterData
 };
 
 export const parameterData: ParametersData = {
   [EffectType.CATHEDRAL]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Diffusion",
     editBL: "Early Reflections",
@@ -119,6 +123,7 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.PLATE]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Pre Delay",
     editBL: "Stereo Width",
@@ -126,6 +131,7 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.SMALL_HALL]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Diffusion",
     editBL: "Early Reflections",
@@ -133,12 +139,14 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.ROOM]: {
+    type: "special",
     variation: "Reverb Time",
     editA: "Pre Delay",
     editB: "Wall Damp"
   },
 
   [EffectType.STUDIO]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Pre Delay",
     editBL: "Early Reflections",
@@ -146,6 +154,7 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.CONCERT]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Pre Delay",
     editBL: "Early Reflections",
@@ -153,6 +162,7 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.STAGE]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Diffusion",
     editBL: "Liveliness",
@@ -160,6 +170,7 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.VOCAL]: {
+    type: "reverb",
     variation: "Reverb Time",
     editA: "Pre Delay",
     editBL: "Early Reflections",
@@ -167,72 +178,78 @@ export const parameterData: ParametersData = {
   },
 
   [EffectType.PERCUSSION]: {
+    type: "special",
     variation: "Reverb Time",
     editA: "Diffusion",
     editB: "High Frequency Decay"
   },
 
   [EffectType.DELAY]: {
+    type: "stereo",
     variation: "Del. Coarse",
-    stereo: true,
     editA: "Delay Time",
     editB: "Feedback",
   },
 
   [EffectType.ECHO]: {
+    type: "stereo",
     variation: "Del. Coarse",
-    stereo: true,
     editA: "Delay Time",
     editB: "Feedback",
   },
 
   [EffectType.GATED_REVERB]: {
+    type: "special",
     variation: "Gate Time",
     editA: "Density",
     editB: "Gate Threshold",
   },
 
   [EffectType.REVERSE_REVERB]: {
+    type: "special",
     variation: "Gate Time",
     editA: "Pre Delay",
     editB: "Gate Threshold",
   },
 
   [EffectType.VOCAL_DISTORTION]: {
+    type: "special",
     variation: "Distortion Type",
     editA: "Delay Time (x 10ms)",
     editB: "Delay Mix",
   },
 
   [EffectType.ROTARY_SPEAKER]: {
+    type: "special",
     variation: "Rotary Type",
     editA: "Horn Speed",
     editB: "Rotor Speed",
   },
 
   [EffectType.VOCODER]: {
+    type: "special",
     variation: "Vocoder Type",
     editA: "Vocoder Distortion",
     editB: "Vocoder Sens",
   },
 
   [EffectType.PITCH]: {
+    type: "stereo",
     variation: "", // todo?
-    stereo: true,
     editA: "Cent",
     editB: "Semi Tone",
   },
 
   [EffectType.FLANGER]: {
+    type: "stereo",
     variation: "Mod. Frequency",
-    stereo: true,
     editA: "Mod. Depth",
     editB: "Mod. Feedback",
   },
 
   [EffectType.CHORUS]: {
+    type: "stereo",
     variation: "Mod. Frequency",
-    stereo: true,
     editA: "Mod. Delay",
     editB: "Mod. Depth",
   },
