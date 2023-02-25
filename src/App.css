@@ -1,4 +1,5 @@
 #root {
+  width: 100%;
   max-width: 100%;
   padding: 2rem;
   text-align: center;
@@ -84,6 +85,10 @@ div.EffectSelector {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+div.EffectSelector select {
+  font-family: Consolas, monospace;
+  font-size: 1.5em;
+}
 
 div.EffectPanel {
   width: 100%;
@@ -98,4 +103,22 @@ div.Param {
   display: flex;
   padding: 10px;
   justify-content: space-between;
+}
+
+/* Specific effect types */
+div.EffectPanel.Reverb {
+  background-color: #124;
+  border: 2px solid #248;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+div.EffectPanel.Reverb div.Param {
+  background-color: #153060;
+}
+
+div.EffectPanel.Reverb input {
+  background-color: #102040;
+  border: 2px solid #248;
+  text-align: center;
 }

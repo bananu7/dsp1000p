@@ -137,7 +137,7 @@ function ReverbEffectPanel(props: {
   parameters: ReverbParameters }
 ) {
   return (
-    <div className="EffectPanel">
+    <div className="EffectPanel Reverb" >
       <Param
         client={props.client}
         param={Parameter.VARIATION}
