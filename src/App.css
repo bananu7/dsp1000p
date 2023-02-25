@@ -2,6 +2,7 @@
   max-width: 100%;
   padding: 2rem;
   text-align: center;
+  margin: auto;
 }
 
 .logo {
@@ -64,6 +65,11 @@ div.ProgramSelector > div.display {
 div.ProgramSelector > button {
   padding: 5px;
   font-size: 3em;
+}
+
+div.BypassSwitch {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 div.MixSlider {

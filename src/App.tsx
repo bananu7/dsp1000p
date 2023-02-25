@@ -51,7 +51,7 @@ function BypassSwitch(props: { client: MidiClient }) {
   }, [props.client]);
 
   return (
-    <div>
+    <div className="BypassSwitch">
       <label>Bypass</label>
       <input type="checkbox" name="bypass" value="bypass" onChange={onChangeBypass} />
     </div>
@@ -70,6 +70,22 @@ function MixSlider(props: { client: MidiClient }) {
     <div className="MixSlider">
       <label>Mix</label>
       <input type="range" min="1" max="100" value={mix} onChange={onChange} name="mix" />
+    </div>
+  )
+}
+
+function EffectSelector(props: { client: MidiClient, effectType: EffectType }) {
+  const options = (Object.keys(EffectType) as Array<keyof typeof EffectType>)
+    .filter(i => !isNaN(Number(i)))
+    .map(et => 
+      <option key={et} value={et}>{EffectType[et]}</option>
+    );
+
+  return (
+    <div className="EffectSelector">
+      <select name="effectType">
+        {options}
+      </select>
     </div>
   )
 }
@@ -160,6 +176,20 @@ function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
   }
 }
 
+function ProgramEditor(props: { client: MidiClient }) {
+  const midiClient = props.client;
+
+  const [effectType, setEffectType] = useState(EffectType.PLATE);
+  return (
+    <>
+      <BypassSwitch client={midiClient} />
+      <MixSlider client={midiClient} />
+      <EffectSelector client={midiClient} effectType={effectType} />
+      <EffectPanel client={midiClient} effectType={effectType} />
+    </>
+  );
+}
+
 function App() {
   const [midiClient, setMidiClient] = useState<MidiClient | null>(null);
 
@@ -168,14 +198,14 @@ function App() {
     setMidiClient(client);
   };
 
+  const effectType = useState
+
   return (
     <div className="App">
       { midiClient ?
         <div>
           <ProgramSelector client={midiClient}/>
-          <BypassSwitch client={midiClient}/>
-          <MixSlider client={midiClient} />
-          <EffectPanel client={midiClient} effectType={EffectType.PLATE} />
+          <ProgramEditor client={midiClient}/>
         </div>
         :
         <div className="card">
