@@ -6,6 +6,11 @@ export class MidiClient {
     console.log("sending program change", programId)
     invoke('send_program_change', { value: programId });
   };
+
+  sendCC(param: number, value: number) {
+    console.log("sending cc", param, value)
+    invoke('send_control_change', { param, value });
+  }
 }
 
 export async function connectMidi(): Promise<MidiClient> {

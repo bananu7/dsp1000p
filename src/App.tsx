@@ -33,6 +33,18 @@ function ProgramSelector(props: { client: MidiClient }) {
   );
 }
 
+function Param(props: { client: MidiClient, param: number }) {
+  const sendCC = () => {
+    props.client.sendCC(props.param, 10);
+  }
+
+  return (
+    <div className="ProgramSelector">
+      <button onClick={sendCC}>sendParam</button>
+    </div>
+  );
+}
+
 function App() {
   const [midiClient, setMidiClient] = useState<MidiClient | null>(null);
 
@@ -44,8 +56,11 @@ function App() {
   return (
     <div className="App">
       <h1>DSP1000P</h1>
-      { midiClient ? 
-        <ProgramSelector client={midiClient}/>
+      { midiClient ?
+        <div>
+          <ProgramSelector client={midiClient}/>
+          <Param client={midiClient} param={21} />
+        </div>
         :
         <div className="card">
           <p>Click to open midi</p>

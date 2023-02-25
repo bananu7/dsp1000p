@@ -69,10 +69,16 @@ fn create_output_connection(output_port_idx: usize)
   Ok(conn_out)
 }
 
-fn send_command(conn_out: &mut MidiOutputConnection, value: u8) {
+fn send_program_change_command(conn_out: &mut MidiOutputConnection, value: u8) {
   const PROGRAM_CHANGE_CHANNEL1: u8 = 0xC1;
   // We're ignoring errors in here
   let _ = conn_out.send(&[PROGRAM_CHANGE_CHANNEL1, value]);
+}
+
+fn send_control_change_command(conn_out: &mut MidiOutputConnection, param: u8, value: u8) {
+  const CC_CHANNEL0: u8 = 0xB0;
+  // We're ignoring errors in here
+  let _ = conn_out.send(&[CC_CHANNEL0, param, value]);
 }
 
 #[tauri::command]
@@ -96,7 +102,19 @@ fn send_program_change(midi_state: tauri::State<'_, MidiState>, value: u8) {
   match maybe_conn_out {
     Some(conn_out) => {
       println!("Sending program change to {}", value);
-      send_command(conn_out, value)
+      send_program_change_command(conn_out, value)
+    },
+    None => ()
+  }
+}
+
+#[tauri::command]
+fn send_control_change(midi_state: tauri::State<'_, MidiState>, param: u8, value: u8) {
+  let maybe_conn_out = &mut *midi_state.output.lock().unwrap();
+  match maybe_conn_out {
+    Some(conn_out) => {
+      println!("Sending cc of param {} value {}", param, value);
+      send_control_change_command(conn_out, param, value)
     },
     None => ()
   }
@@ -106,7 +124,7 @@ fn send_program_change(midi_state: tauri::State<'_, MidiState>, value: u8) {
 fn main() {
   tauri::Builder::default()
     .manage(MidiState { ..Default::default() })
-    .invoke_handler(tauri::generate_handler![open_midi_connection, send_program_change])
+    .invoke_handler(tauri::generate_handler![open_midi_connection, send_program_change, send_control_change])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
