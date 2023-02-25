@@ -81,6 +81,10 @@ div.ProgramSelector > * {
   min-width: 100px;
 }
 
+div.ProgramSelector > button {
+  padding: 5px;
+  font-size: 3em;
+}
 
 div.ProgramSelector > span {
   padding: 5px;

@@ -5,24 +5,21 @@ import './App.css'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
 
-function ProgramSelector() {
-  const sendProgramChange = (programId: number) => {
-    console.log("sending program change", programId)
-    invoke('send_program_change', { value: programId });
-  };
+import {MidiClient, connectMidi} from './backend/midi'
 
+function ProgramSelector(props: { client: MidiClient }) {
   const programUp = () => {
     if (programId >= 99)
       return;
     setProgramId(id => id + 1);
-    sendProgramChange(programId + 1);
+    props.client.sendProgramChange(programId + 1);
   }
 
   const programDown = () => {
     if (programId <= 0)
       return;
     setProgramId(id => id - 1);
-    sendProgramChange(programId - 1);
+    props.client.sendProgramChange(programId - 1);
   }
 
   const [programId, setProgramId] = useState(0);
@@ -30,34 +27,33 @@ function ProgramSelector() {
   return (
     <div className="ProgramSelector">
       <span>{programId+1}</span>
-      <button onClick={programUp}>Up</button>
-      <button onClick={programDown}>Down</button>
+      <button onClick={programDown}>🡇</button>
+      <button onClick={programUp}>🡅</button>
     </div>
   );
-
 }
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [midiClient, setMidiClient] = useState<MidiClient | null>(null);
 
   const openMidi = async () => {
-    console.log("opening midi");
-    const result = await invoke('open_midi_connection', { outputPortIdx: 1 });
-    console.log("midi opened");
+    const client = await connectMidi();
+    setMidiClient(client);
   };
 
   return (
     <div className="App">
       <h1>DSP1000P</h1>
-      <div className="card">
-        <button onClick={() => openMidi()}>
-          openMidi
-        </button>
-        <p>Click to open midi</p>
-        <ProgramSelector />
-      </div>
+      { midiClient ? 
+        <ProgramSelector client={midiClient}/>
+        :
+        <div className="card">
+          <p>Click to open midi</p>
+          <button onClick={openMidi}>openMidi</button>
+        </div>
+      }
       <p className="read-the-docs">
-        Yoo it works
+        Made with ❤️ with React+Tauri.
       </p>
     </div>
   )
