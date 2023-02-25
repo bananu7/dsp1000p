@@ -80,6 +80,11 @@ div.MixSlider > input {
   width: 100%;
 }
 
+div.EffectSelector {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 div.EffectPanel {
   width: 100%;
   display: flex;

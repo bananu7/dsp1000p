@@ -74,16 +74,22 @@ function MixSlider(props: { client: MidiClient }) {
   )
 }
 
-function EffectSelector(props: { client: MidiClient, effectType: EffectType }) {
+function EffectSelector(props: { client: MidiClient, effectType: EffectType, setEffectType: (et: EffectType) => void }) {
   const options = (Object.keys(EffectType) as Array<keyof typeof EffectType>)
     .filter(i => !isNaN(Number(i)))
     .map(et => 
       <option key={et} value={et}>{EffectType[et]}</option>
     );
 
+  const onChange = useCallback((e) => {
+    const et = Number(e.target.value);
+    props.client.sendCC(Parameter.EFFECT, et-1);
+    props.setEffectType(et);
+  }, [props.client]);
+
   return (
     <div className="EffectSelector">
-      <select name="effectType">
+      <select name="effectType" onChange={onChange}>
         {options}
       </select>
     </div>
@@ -96,11 +102,17 @@ type ParamProps = {
   min: number,
   max: number,
   label: string,
+  engine?: number,
 }
 function Param(props: ParamProps) {
   const [value, setValue] = useState(0);
   const changeValue = (v: number) => {
     console.log("change value")
+
+    if (props.engine) {
+      props.client.sendCC(Parameter.ENGINE, props.engine);
+    }
+
     props.client.sendCC(props.param, v-1); // TODO zero-based
     setValue(v);
   }
@@ -112,7 +124,7 @@ function Param(props: ParamProps) {
         type="number"
         min={props.min}
         max={props.max}
-        value={value}
+        value={value} // TODO for some variation this needs -1
         onChange={e => changeValue(Number(e.target.value))}
       />
     </div>
@@ -126,7 +138,6 @@ function ReverbEffectPanel(props: {
 ) {
   return (
     <div className="EffectPanel">
-      <span>{EffectType[props.effectType]}</span>
       <Param
         client={props.client}
         param={Parameter.VARIATION}
@@ -148,6 +159,7 @@ function ReverbEffectPanel(props: {
         min={1}
         max={64}
         label={props.parameters.editBL}
+        engine={1}
       />
       <Param
         client={props.client}
@@ -155,6 +167,7 @@ function ReverbEffectPanel(props: {
         min={1}
         max={64}
         label={props.parameters.editBR}
+        engine={2}
       />
     </div>
   )
@@ -184,7 +197,7 @@ function ProgramEditor(props: { client: MidiClient }) {
     <>
       <BypassSwitch client={midiClient} />
       <MixSlider client={midiClient} />
-      <EffectSelector client={midiClient} effectType={effectType} />
+      <EffectSelector client={midiClient} effectType={effectType} setEffectType={setEffectType}/>
       <EffectPanel client={midiClient} effectType={effectType} />
     </>
   );
@@ -197,8 +210,6 @@ function App() {
     const client = await connectMidi();
     setMidiClient(client);
   };
-
-  const effectType = useState
 
   return (
     <div className="App">
