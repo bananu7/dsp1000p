@@ -10,7 +10,7 @@ function App() {
 
   const openMidi = () => {
     console.log("opening midi")
-    invoke('open_midi_connection', { inputPortIdx: 1, outputPortIdx: 1 });
+    invoke('open_midi_connection', { outputPortIdx: 1 });
   };
 
   const sendProgramChange = () => {

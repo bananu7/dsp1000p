@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::sync::Arc;
+
 use std::error::Error;
 use std::io::Write;
 use midir::MidiOutput;
@@ -12,7 +12,7 @@ use std::io::stdout;
 use std::io::stdin;
 use std::sync::{Mutex};
 use midir::{MidiInputConnection, MidiOutputConnection};
-use tauri::{Manager, Window, Wry};
+use tauri::{Window, Wry};
 use serde::{Serialize};
 
 // midi stuff
@@ -28,7 +28,7 @@ struct MidiMessage {
   message: Vec<u8>
 }
 
-fn create_output_connection(output_port_idx: usize)
+fn create_output_connection(_output_port_idx: usize)
   -> Result<MidiOutputConnection, Box<dyn Error>>
 {
   let midi_out = MidiOutput::new("My Test Output")?;
@@ -71,17 +71,16 @@ fn send_command(conn_out: &mut MidiOutputConnection, value: u8) {
 #[tauri::command]
 fn open_midi_connection(
   midi_state: tauri::State<'_, MidiState>,
-  window: Window<Wry>,
-  input_port_idx: usize,
+  _window: Window<Wry>,
   output_port_idx: usize,
 ) {
   println!("Message from Rust");
   let conn_out = create_output_connection(output_port_idx).unwrap();
   *midi_state.output.lock().unwrap() = Some(conn_out);
   
-  let handle = Arc::new(window).clone();
+  //let handle = Arc::new(window).clone();
   //handle.emit_all("midi_message",  MidiMessage { message: message.to_vec() });
-  handle.emit_all("midi_message",  MidiMessage { message: vec!(1,2,3) });
+  //handle.emit_all("midi_message",  MidiMessage { message: vec!(1,2,3) });
 }
 
 #[tauri::command]
