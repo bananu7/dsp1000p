@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './App.css'
 
 import { listen } from '@tauri-apps/api/event'
@@ -40,6 +40,22 @@ function ProgramSelector(props: { client: MidiClient }) {
       <button onClick={programUp}>🡅</button>
     </div>
   );
+}
+
+function MixSlider(props: { client: MidiClient }) {
+  const [mix, setMix] = useState(20);
+  const onChange = useCallback((e) => {
+    const v = Number(e.target.value);
+    props.client.sendCC(Parameter.MIX, v);
+    setMix(v);
+  }, [props.client]);
+
+  return (
+    <div className="MixSlider">
+      <label>Mix</label>
+      <input type="range" min="1" max="100" value={mix} onChange={onChange} name="mix" />
+    </div>
+  )
 }
 
 type ParamProps = {
@@ -141,6 +157,7 @@ function App() {
       { midiClient ?
         <div>
           <ProgramSelector client={midiClient}/>
+          <MixSlider client={midiClient} />
           <EffectPanel client={midiClient} effectType={EffectType.PLATE} />
         </div>
         :

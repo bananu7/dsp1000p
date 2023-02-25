@@ -66,6 +66,14 @@ div.ProgramSelector > button {
   font-size: 3em;
 }
 
+div.MixSlider {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+div.MixSlider > input {
+  width: 100%;
+}
+
 div.EffectPanel {
   width: 100%;
   display: flex;
