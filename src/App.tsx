@@ -4,8 +4,6 @@ import './App.css'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
 
-import { Display } from "react-7-segment-display";
-
 import {MidiClient, connectMidi} from './backend/midi'
 import {EffectType, Parameter, parameterData, ReverbParameters, StereoParameters} from './backend/dsp_constants'
 import {EffectPanel, ReverbEffectPanel, StereoEffectPanel} from './components/EffectPanel'

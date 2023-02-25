@@ -49,6 +49,12 @@ export function StereoEffectPanel(props: {
   effectType: EffectType,
   parameters: StereoParameters }
 ) {
+  const channelStyle = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  };
+
   return (
     <div className="EffectPanel Delay" >
       <Param
@@ -59,7 +65,8 @@ export function StereoEffectPanel(props: {
         label={props.parameters.variation}
       />
 
-      <div>
+      <div style={channelStyle}>
+        <span>LEFT</span>
         <Param
           client={props.client}
           param={Parameter.EDIT_A}
@@ -77,7 +84,8 @@ export function StereoEffectPanel(props: {
           engine={1}
         />
       </div>
-      <div>
+      <div style={channelStyle}>
+        <span>RIGHT</span>
         <Param
           client={props.client}
           param={Parameter.EDIT_A}
@@ -102,9 +110,18 @@ export function StereoEffectPanel(props: {
 export function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
   const data = parameterData[props.effectType];
 
-  if (data.type == "reverb") {
+  if (data.type === "reverb") {
     return (
       <ReverbEffectPanel
+        client={props.client}
+        effectType={props.effectType}
+        parameters={data}
+      />
+    );
+  }
+  else if (data.type === "stereo") {
+    return (
+      <StereoEffectPanel
         client={props.client}
         effectType={props.effectType}
         parameters={data}
