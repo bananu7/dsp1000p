@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
+
+import { Display } from "react-7-segment-display";
 
 import {MidiClient, connectMidi} from './backend/midi'
 import {EffectType, Parameter} from './backend/dsp_constants'
@@ -27,7 +28,14 @@ function ProgramSelector(props: { client: MidiClient }) {
 
   return (
     <div className="ProgramSelector">
-      <span>{programId+1}</span>
+      <Display
+        count={2}
+        color="green"
+        value={programId+1}
+        height={80}
+        skew={true}
+        backgroundColor="black"
+      />
       <button onClick={programDown}>🡇</button>
       <button onClick={programUp}>🡅</button>
     </div>
@@ -64,6 +72,7 @@ function Param(props: ParamProps) {
 }
 
 function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
+
   return (
     <div className="EffectPanel">
       <span>{EffectType[props.effectType]}</span>
@@ -84,7 +93,6 @@ function App() {
 
   return (
     <div className="App">
-      <h1>DSP1000P</h1>
       { midiClient ?
         <div>
           <ProgramSelector client={midiClient}/>
