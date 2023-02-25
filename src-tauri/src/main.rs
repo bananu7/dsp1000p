@@ -3,24 +3,24 @@
   windows_subsystem = "windows"
 )]
 
-use std::sync::{Arc, Mutex};
-use midir::{Ignore, MidiInput, MidiInputConnection};
+use std::sync::Arc;
+use std::error::Error;
+use std::io::Write;
+use midir::MidiOutput;
+use midir::MidiOutputPort;
+use std::io::stdout;
+use std::io::stdin;
+use std::sync::{Mutex};
+use midir::{MidiInputConnection, MidiOutputConnection};
 use tauri::{Manager, Window, Wry};
 use serde::{Serialize};
-
-// main
-
-fn main() {
-  tauri::Builder::default()
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
-}
 
 // midi stuff
 
 #[derive(Default)]
 pub struct MidiState {
-  pub input: Mutex<Option<MidiInputConnection<()>>>
+  pub input: Mutex<Option<MidiInputConnection<()>>>,
+  pub output: Mutex<Option<MidiOutputConnection>>,
 }
 
 #[derive(Clone, Serialize)]
@@ -28,26 +28,60 @@ struct MidiMessage {
   message: Vec<u8>
 }
 
+fn create_output_connection(midi_state: tauri::State<'_, MidiState>, output_port_idx: usize)
+  -> Result<MidiOutputConnection, Box<dyn Error>>
+{
+  let midi_out = MidiOutput::new("My Test Output")?;
+    
+  // Get an output port (read from console if multiple are available)
+  let out_ports = midi_out.ports();
+  let out_port: &MidiOutputPort = match out_ports.len() {
+      0 => return Err("no output port found".into()),
+      1 => {
+          println!("Choosing the only available output port: {}", midi_out.port_name(&out_ports[0]).unwrap());
+          &out_ports[0]
+      },
+      _ => {
+          println!("\nAvailable output ports:");
+          for (i, p) in out_ports.iter().enumerate() {
+              println!("{}: {}", i, midi_out.port_name(p).unwrap());
+          }
+          print!("Please select output port: ");
+          stdout().flush()?;
+          let mut input = String::new();
+          stdin().read_line(&mut input)?;
+          out_ports.get(input.trim().parse::<usize>()?)
+                   .ok_or("invalid output port selected")?
+      }
+  };
+
+  println!("\nOpening connection");
+  let conn_out = midi_out.connect(out_port, "midir-test")?;
+  println!("Connection open. Listen!");
+
+  Ok(conn_out)
+}
 
 #[tauri::command]
 fn open_midi_connection(
   midi_state: tauri::State<'_, MidiState>,
   window: Window<Wry>,
-  input_idx: usize
+  input_port_idx: usize,
+  output_port_idx: usize,
 ) {
-  /*
+  println!("Message from Rust");
+  let connection = create_output_connection(midi_state, output_port_idx);
+  
   let handle = Arc::new(window).clone();
-  let mut midi_in = MidiInput::new("My Test Input").unwrap();
-  midi_in.ignore(Ignore::None);
-  let midi_in_ports = midi_in.ports();
-  if let Some(in_port) = midi_in_ports.get(input_idx) {
-    let conn_in = midi_in.connect(in_port, "midir-test", move |stamp, message, log| {
-      // The last of the three callback parameters is the object that we pass in as last parameter of `connect`.
+  //handle.emit_all("midi_message",  MidiMessage { message: message.to_vec() });
+  handle.emit_all("midi_message",  MidiMessage { message: vec!(1,2,3) });
+}
 
-      handle.emit_all("midi_message",  MidiMessage { message: message.to_vec() });
-
-      println!("{}: {:?} (len = {})", stamp, message, message.len());
-    }, ()).unwrap();
-    *midi_state.input.lock().unwrap() = Some(conn_in);
-  }*/
+// main
+fn main() {
+  tauri::Builder::default()
+    .manage(MidiState { ..Default::default() })
+    .invoke_handler(tauri::generate_handler![open_midi_connection])
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
 }
