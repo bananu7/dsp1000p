@@ -6,6 +6,7 @@ import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
 
 import {MidiClient, connectMidi} from './backend/midi'
+import {EffectType, Parameter} from './backend/dsp_constants'
 
 function ProgramSelector(props: { client: MidiClient }) {
   const programUp = () => {
@@ -33,16 +34,41 @@ function ProgramSelector(props: { client: MidiClient }) {
   );
 }
 
-function Param(props: { client: MidiClient, param: number }) {
-  const sendCC = () => {
-    props.client.sendCC(props.param, 10);
+type ParamProps = {
+  client: MidiClient,
+  param: number,
+  min: number,
+  max: number,
+}
+function Param(props: ParamProps) {
+  const [value, setValue] = useState(0);
+  const changeValue = (v: number) => {
+    console.log("change value")
+    props.client.sendCC(props.param, v-1); // TODO zero-based
+    setValue(v);
   }
 
   return (
     <div className="ProgramSelector">
-      <button onClick={sendCC}>sendParam</button>
+      <label>Variation</label>
+      <input
+        type="number"
+        min={props.min}
+        max={props.max}
+        value={value}
+        onChange={e => changeValue(Number(e.target.value))}
+      />
     </div>
   );
+}
+
+function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
+  return (
+    <div className="EffectPanel">
+      <span>{EffectType[props.effectType]}</span>
+      <Param client={props.client} param={21} min={1} max={32} />
+    </div>
+  )
 }
 
 function App() {
@@ -59,7 +85,7 @@ function App() {
       { midiClient ?
         <div>
           <ProgramSelector client={midiClient}/>
-          <Param client={midiClient} param={21} />
+          <EffectPanel client={midiClient} effectType={EffectType.PLATE} />
         </div>
         :
         <div className="card">
