@@ -7,72 +7,11 @@ import { invoke } from '@tauri-apps/api'
 import { Display } from "react-7-segment-display";
 
 import {MidiClient, connectMidi} from './backend/midi'
-import {EffectType, Parameter, parameterData, ReverbParameters} from './backend/dsp_constants'
-
-function ProgramSelector(props: { client: MidiClient }) {
-  const programUp = () => {
-    if (programId >= 99)
-      return;
-    setProgramId(id => id + 1);
-    props.client.sendProgramChange(programId + 1);
-  }
-
-  const programDown = () => {
-    if (programId <= 0)
-      return;
-    setProgramId(id => id - 1);
-    props.client.sendProgramChange(programId - 1);
-  }
-
-  const [programId, setProgramId] = useState(0);
-
-  return (
-    <div className="ProgramSelector">
-      <Display
-        count={2}
-        color="green"
-        value={programId+1}
-        height={80}
-        skew={true}
-        backgroundColor="black"
-      />
-      <button onClick={programDown}>🡇</button>
-      <button onClick={programUp}>🡅</button>
-    </div>
-  );
-}
-
-function BypassSwitch(props: { client: MidiClient }) {
-  const [bypass, setBypass] = useState(false);
-  const onChangeBypass = useCallback((e) => {
-    const v = Boolean(e.target.checked);
-    props.client.sendCC(Parameter.IN_OUT, v ? 0 : 1); // TODO 0 means disable?
-    setBypass(v);
-  }, [props.client]);
-
-  return (
-    <div className="BypassSwitch">
-      <label>Bypass</label>
-      <input type="checkbox" name="bypass" value="bypass" onChange={onChangeBypass} />
-    </div>
-  )
-}
-
-function MixSlider(props: { client: MidiClient }) {
-  const [mix, setMix] = useState(20);
-  const onChange = useCallback((e) => {
-    const v = Number(e.target.value);
-    props.client.sendCC(Parameter.MIX, v);
-    setMix(v);
-  }, [props.client]);
-
-  return (
-    <div className="MixSlider">
-      <label>Mix</label>
-      <input type="range" min="1" max="100" value={mix} onChange={onChange} name="mix" />
-    </div>
-  )
-}
+import {EffectType, Parameter, parameterData, ReverbParameters, StereoParameters} from './backend/dsp_constants'
+import {EffectPanel, ReverbEffectPanel, StereoEffectPanel} from './components/EffectPanel'
+import {BypassSwitch} from './components/BypassSwitch'
+import {MixSlider} from './components/MixSlider'
+import {ProgramSelector} from './components/ProgramSelector'
 
 function EffectSelector(props: { client: MidiClient, effectType: EffectType, setEffectType: (et: EffectType) => void }) {
   const options = (Object.keys(EffectType) as Array<keyof typeof EffectType>)
@@ -96,98 +35,6 @@ function EffectSelector(props: { client: MidiClient, effectType: EffectType, set
   )
 }
 
-type ParamProps = {
-  client: MidiClient,
-  param: number,
-  min: number,
-  max: number,
-  label: string,
-  engine?: number,
-}
-function Param(props: ParamProps) {
-  const [value, setValue] = useState(0);
-  const changeValue = (v: number) => {
-    console.log("change value")
-
-    if (props.engine) {
-      props.client.sendCC(Parameter.ENGINE, props.engine);
-    }
-
-    props.client.sendCC(props.param, v-1); // TODO zero-based
-    setValue(v);
-  }
-
-  return (
-    <div className="Param">
-      <label>{props.label}</label>
-      <input
-        type="number"
-        min={props.min}
-        max={props.max}
-        value={value} // TODO for some variation this needs -1
-        onChange={e => changeValue(Number(e.target.value))}
-      />
-    </div>
-  );
-}
-
-function ReverbEffectPanel(props: { 
-  client: MidiClient,
-  effectType: EffectType,
-  parameters: ReverbParameters }
-) {
-  return (
-    <div className="EffectPanel Reverb" >
-      <Param
-        client={props.client}
-        param={Parameter.VARIATION}
-        min={1}
-        max={32}
-        label={props.parameters.variation}
-      />
-
-      <Param
-        client={props.client}
-        param={Parameter.EDIT_A}
-        min={1}
-        max={64}
-        label={props.parameters.editA}
-      />
-      <Param
-        client={props.client}
-        param={Parameter.EDIT_B}
-        min={1}
-        max={64}
-        label={props.parameters.editBL}
-        engine={1}
-      />
-      <Param
-        client={props.client}
-        param={Parameter.EDIT_B}
-        min={1}
-        max={64}
-        label={props.parameters.editBR}
-        engine={2}
-      />
-    </div>
-  )
-}
-
-function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
-  const data = parameterData[props.effectType];
-
-  if (data.type == "reverb") {
-    return (
-      <ReverbEffectPanel
-        client={props.client}
-        effectType={props.effectType}
-        parameters={data}
-      />
-    );
-  } else {
-    return (<span>This effect is not supported yet</span>);
-  }
-}
 
 function ProgramEditor(props: { client: MidiClient }) {
   const midiClient = props.client;

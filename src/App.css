@@ -95,6 +95,8 @@ div.EffectPanel {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  border-radius: 5px;
+  padding: 15px;
 }
 
 div.Param {
@@ -105,12 +107,16 @@ div.Param {
   justify-content: space-between;
 }
 
+div.Param input {
+  border-width: 2px;
+  border-style: solid;
+  text-align: center;
+}
+
 /* Specific effect types */
 div.EffectPanel.Reverb {
   background-color: #124;
-  border: 2px solid #248;
-  border-radius: 5px;
-  padding: 15px;
+  border-color: #248;
 }
 
 div.EffectPanel.Reverb div.Param {
@@ -119,6 +125,20 @@ div.EffectPanel.Reverb div.Param {
 
 div.EffectPanel.Reverb input {
   background-color: #102040;
-  border: 2px solid #248;
-  text-align: center;
+  border-color: #248;
+}
+
+/* Delay */
+div.EffectPanel.Delay {
+  background-color: #142;
+  border-color: #284;
+}
+
+div.EffectPanel.Delay div.Param {
+  background-color: #156030;
+}
+
+div.EffectPanel.Delay input {
+  background-color: #104020;
+  border-color: #284;
 }

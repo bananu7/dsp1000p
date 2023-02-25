@@ -84,7 +84,7 @@ export type ReverbParameters = Variation & {
 
 // Delay, Echo, Flanger, Pitch, Chorus
 export type StereoParameters = Variation & {
-  type: "stereo",
+  type: "stereo" | "delay",
   editA: string,
   editB: string,
 }
