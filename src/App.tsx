@@ -13,12 +13,21 @@ function App() {
     invoke('open_midi_connection', { inputPortIdx: 1, outputPortIdx: 1 });
   };
 
+  const sendProgramChange = () => {
+    console.log("sending program change")
+    invoke('send_program_change', { value: 1 });
+  };
+
   return (
     <div className="App">
       <h1>DSP1000P</h1>
       <div className="card">
         <button onClick={() => openMidi()}>
           openMidi
+        </button>
+
+        <button onClick={() => sendProgramChange()}>
+          send rogram change
         </button>
         <p>Click to open midi</p>
       </div>

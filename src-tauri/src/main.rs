@@ -28,7 +28,7 @@ struct MidiMessage {
   message: Vec<u8>
 }
 
-fn create_output_connection(midi_state: tauri::State<'_, MidiState>, output_port_idx: usize)
+fn create_output_connection(output_port_idx: usize)
   -> Result<MidiOutputConnection, Box<dyn Error>>
 {
   let midi_out = MidiOutput::new("My Test Output")?;
@@ -62,6 +62,12 @@ fn create_output_connection(midi_state: tauri::State<'_, MidiState>, output_port
   Ok(conn_out)
 }
 
+fn send_command(conn_out: &mut MidiOutputConnection, value: u8) {
+  const PROGRAM_CHANGE_CHANNEL1: u8 = 0xC1;
+  // We're ignoring errors in here
+  let _ = conn_out.send(&[PROGRAM_CHANGE_CHANNEL1, value]);
+}
+
 #[tauri::command]
 fn open_midi_connection(
   midi_state: tauri::State<'_, MidiState>,
@@ -70,18 +76,31 @@ fn open_midi_connection(
   output_port_idx: usize,
 ) {
   println!("Message from Rust");
-  let connection = create_output_connection(midi_state, output_port_idx);
+  let conn_out = create_output_connection(output_port_idx).unwrap();
+  *midi_state.output.lock().unwrap() = Some(conn_out);
   
   let handle = Arc::new(window).clone();
   //handle.emit_all("midi_message",  MidiMessage { message: message.to_vec() });
   handle.emit_all("midi_message",  MidiMessage { message: vec!(1,2,3) });
 }
 
+#[tauri::command]
+fn send_program_change(midi_state: tauri::State<'_, MidiState>, value: u8) {
+  let maybe_conn_out = &mut *midi_state.output.lock().unwrap();
+  match maybe_conn_out {
+    Some(conn_out) => {
+      println!("Sending program change to {}", value);
+      send_command(conn_out, value)
+    },
+    None => ()
+  }
+}
+
 // main
 fn main() {
   tauri::Builder::default()
     .manage(MidiState { ..Default::default() })
-    .invoke_handler(tauri::generate_handler![open_midi_connection])
+    .invoke_handler(tauri::generate_handler![open_midi_connection, send_program_change])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
