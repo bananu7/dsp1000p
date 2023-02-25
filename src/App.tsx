@@ -42,6 +42,22 @@ function ProgramSelector(props: { client: MidiClient }) {
   );
 }
 
+function BypassSwitch(props: { client: MidiClient }) {
+  const [bypass, setBypass] = useState(false);
+  const onChangeBypass = useCallback((e) => {
+    const v = Boolean(e.target.checked);
+    props.client.sendCC(Parameter.IN_OUT, v ? 0 : 1); // TODO 0 means disable?
+    setBypass(v);
+  }, [props.client]);
+
+  return (
+    <div>
+      <label>Bypass</label>
+      <input type="checkbox" name="bypass" value="bypass" onChange={onChangeBypass} />
+    </div>
+  )
+}
+
 function MixSlider(props: { client: MidiClient }) {
   const [mix, setMix] = useState(20);
   const onChange = useCallback((e) => {
@@ -157,6 +173,7 @@ function App() {
       { midiClient ?
         <div>
           <ProgramSelector client={midiClient}/>
+          <BypassSwitch client={midiClient}/>
           <MixSlider client={midiClient} />
           <EffectPanel client={midiClient} effectType={EffectType.PLATE} />
         </div>
