@@ -39,6 +39,7 @@ type ParamProps = {
   param: number,
   min: number,
   max: number,
+  label: string,
 }
 function Param(props: ParamProps) {
   const [value, setValue] = useState(0);
@@ -50,7 +51,7 @@ function Param(props: ParamProps) {
 
   return (
     <div className="ProgramSelector">
-      <label>Variation</label>
+      <label>{props.label}</label>
       <input
         type="number"
         min={props.min}
@@ -66,7 +67,9 @@ function EffectPanel(props: { client: MidiClient, effectType: EffectType }) {
   return (
     <div className="EffectPanel">
       <span>{EffectType[props.effectType]}</span>
-      <Param client={props.client} param={21} min={1} max={32} />
+      <Param client={props.client} param={Parameter.VARIATION} min={1} max={32} label="Variation"/>
+      <Param client={props.client} param={Parameter.EDIT_A} min={1} max={64} label="Edit A"/>
+      <Param client={props.client} param={Parameter.EDIT_B} min={1} max={64} label="Edit B"/>
     </div>
   )
 }

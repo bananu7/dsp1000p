@@ -1,7 +1,7 @@
 export enum Parameter {
   EFFECT = 20,    // 0..31
   VARIATION = 21, // 0..31
-  ENGINE = 22,    // 0,1,2
+  ENGINE = 22,    // 0,1,2 - 0 is couple, 1 is L, 2 is R
   EDIT_A = 23,    // 0..63 / 0..100 (cents)
   EDIT_B = 24,    // 0..63 / 0..24 (semitones)
   EQ_LO  = 25,    // 0..32 (corresponds to -16..16)
@@ -48,3 +48,25 @@ export enum EffectType {
   FLANGER_AND_ECHO = 31,
   CHORUS_AND_ECHO = 32
 }
+
+/*
+
+Effects can have up to 5 parameters.
+They are
+ - Variation
+ - Edit A - Engine L
+ - Edit A - Engine R
+ - Edit B - Engine L
+ - Edit B - Engine R
+
+Not all engines make use of it all. E.g. CATHEDRAL
+has 4 parameters:
+ - Reverb Time -> Variation
+ - Diffusion -> Edit A (impossible to choose Engine, both always light up)
+ - Early Reflections -> Edit B, Engine L
+ - High Multiply -> Edit B, Engine R
+
+In order to set the parameters, first Engine needs to be set to the appropriate one,
+then edit a or b can be changed.
+
+*/
