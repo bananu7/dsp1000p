@@ -4,7 +4,7 @@ import { Parameter } from '../backend/dsp_constants'
 
 export function BypassSwitch(props: { client: MidiClient }) {
   const [bypass, setBypass] = useState(false);
-  const onChangeBypass = useCallback((e) => {
+  const onChangeBypass = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const v = Boolean(e.target.checked);
     props.client.sendCC(Parameter.IN_OUT, v ? 0 : 1); // TODO 0 means disable?
     setBypass(v);

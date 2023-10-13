@@ -18,7 +18,7 @@ function EffectSelector(props: { client: MidiClient, effectType: EffectType, set
       <option key={et} value={et}>{EffectType[et]}</option>
     );
 
-  const onChange = useCallback((e) => {
+  const onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const et = Number(e.target.value);
     props.client.sendCC(Parameter.EFFECT, et-1);
     props.setEffectType(et);

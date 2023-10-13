@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import {MidiClient } from '../backend/midi'
 import {EffectType, Parameter, parameterData, ReverbParameters, StereoParameters} from '../backend/dsp_constants'
 import {Param} from './Param'
@@ -53,7 +54,7 @@ export function StereoEffectPanel(props: {
     display: "flex",
     flexDirection: "column",
     gap: "5px",
-  };
+  } as CSSProperties;
 
   return (
     <div className="EffectPanel Delay" >
