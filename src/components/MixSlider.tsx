@@ -4,7 +4,7 @@ import { Parameter } from '../backend/dsp_constants'
 
 export function MixSlider(props: { client: MidiClient }) {
   const [mix, setMix] = useState(20);
-  const onChange = useCallback((e) => {
+  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
     props.client.sendCC(Parameter.MIX, v);
     setMix(v);
