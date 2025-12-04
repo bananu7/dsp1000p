@@ -56,7 +56,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 800,
+        "height": 1000,
         "resizable": false,
         "title": "dsp1000p",
         "width": 600

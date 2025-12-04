@@ -13,10 +13,21 @@ export class MidiClient {
   }
 }
 
-export async function connectMidi(): Promise<MidiClient> {
+export async function connectMidi(): Promise<MidiClientMock> {
   console.log("opening midi");
-  const result = await invoke('open_midi_connection', { outputPortIdx: 1 });
+  //const result = await invoke('open_midi_connection', { outputPortIdx: 1 });
   console.log("midi opened");
 
-  return new MidiClient();
+  return new MidiClientMock();
+}
+
+
+export class MidiClientMock {
+  sendProgramChange(programId: number) {
+    console.log("sending program change", programId)
+  };
+
+  sendCC(param: number, value: number) {
+    console.log("sending cc", param, value)
+  }
 }

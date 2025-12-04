@@ -31,8 +31,8 @@ export function ProgramSelector(props: { client: MidiClient }) {
         skew={true}
         backgroundColor="black"
       />
-      <button onClick={programDown}>🡇</button>
-      <button onClick={programUp}>🡅</button>
+      <button onClick={programDown}>↓</button>
+      <button onClick={programUp}>↑</button>
     </div>
   );
 }

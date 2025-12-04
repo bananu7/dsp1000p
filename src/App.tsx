@@ -4,7 +4,7 @@ import './App.css'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
 
-import {MidiClient, connectMidi} from './backend/midi'
+import {MidiClient, connectMidi, MidiClientMock} from './backend/midi'
 import {EffectType, Parameter, parameterData, ReverbParameters, StereoParameters} from './backend/dsp_constants'
 import {EffectPanel, ReverbEffectPanel, StereoEffectPanel} from './components/EffectPanel'
 import {BypassSwitch} from './components/BypassSwitch'
@@ -37,7 +37,7 @@ function EffectSelector(props: { client: MidiClient, effectType: EffectType, set
 function ProgramEditor(props: { client: MidiClient }) {
   const midiClient = props.client;
 
-  const [effectType, setEffectType] = useState(EffectType.PLATE);
+  const [effectType, setEffectType] = useState(EffectType.CATHEDRAL);
   return (
     <>
       <BypassSwitch client={midiClient} />
@@ -49,7 +49,7 @@ function ProgramEditor(props: { client: MidiClient }) {
 }
 
 function App() {
-  const [midiClient, setMidiClient] = useState<MidiClient | null>(null);
+  const [midiClient, setMidiClient] = useState<MidiClientMock | null>(null);
 
   const openMidi = async () => {
     const client = await connectMidi();

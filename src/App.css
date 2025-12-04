@@ -112,6 +112,7 @@ div.Param input {
   border-width: 2px;
   border-style: solid;
   text-align: center;
+  font-size: 18px;
 }
 
 /* Specific effect types */
