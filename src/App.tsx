@@ -14,7 +14,7 @@ import {ProgramSelector} from './components/ProgramSelector'
 function EffectSelector(props: { client: MidiClient, effectType: EffectType, setEffectType: (et: EffectType) => void }) {
   const options = (Object.keys(EffectType) as Array<keyof typeof EffectType>)
     .filter(i => !isNaN(Number(i)))
-    .map(et => 
+    .map(et =>
       <option key={et} value={et}>{EffectType[et]}</option>
     );
 

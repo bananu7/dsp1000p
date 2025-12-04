@@ -1,9 +1,9 @@
-import { CSSProperties } from 'react'
 import {MidiClient } from '../backend/midi'
 import {EffectType, Parameter, parameterData, ReverbParameters, StereoParameters} from '../backend/dsp_constants'
 import {Param} from './Param'
+import { CSSProperties } from 'react';
 
-export function ReverbEffectPanel(props: { 
+export function ReverbEffectPanel(props: {
   client: MidiClient,
   effectType: EffectType,
   parameters: ReverbParameters }
@@ -45,16 +45,16 @@ export function ReverbEffectPanel(props: {
   )
 }
 
-export function StereoEffectPanel(props: { 
+export function StereoEffectPanel(props: {
   client: MidiClient,
   effectType: EffectType,
   parameters: StereoParameters }
 ) {
-  const channelStyle = {
+  const channelStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     gap: "5px",
-  } as CSSProperties;
+  };
 
   return (
     <div className="EffectPanel Delay" >
